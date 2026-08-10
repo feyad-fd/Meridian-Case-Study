@@ -35,13 +35,48 @@ export default function Index() {
   return (
     <div className="case-study"><div className="sheet">
       <header className="masthead">
-        <div className="masthead-top"><span>Product Design — Case Study</span><span>Draft rev. B · Aug 2026</span></div>
+        <div className="masthead-top"><span>Product Design — Case Study</span></div>
         <h1 className="doc-title">Redlining<br />the <em>First Fold</em></h1>
         <p className="doc-sub">This landing page got one screen to make its case, no matter which channel sent the visitor. Most never scrolled to a second.</p>
         <div className="byline"><span><b>Role</b> — Design Point of Contact</span><span><b>Timeline</b> — Jul 3–20, 2026</span><span><b>Tools</b> — Figma, Microsoft Clarity</span><span><b>Status</b> — Shipped, live</span></div>
       </header>
 
-      <section className="abstract reveal"><div className="doc-row"><aside className="margin-col"><span className="sec-num">Abstract</span></aside><div className="content-col"><div className="abstract-box">Meridian Editorial pulls traffic from three channels: mostly journal backlinks out of its own online research library, a paid-campaign share, and a smaller slice of organic Google search. Every one of those visitors arrives already primed — off a citation, an ad, or a targeted search — with no patience for brand storytelling. Session recordings showed most of them never scrolled past the first screen, yet that screen opened with a full-height hero and buried the services under a tab bar that visually favored one option over the rest. Over three weeks I rebuilt the first fold to lead with services and put every tab on equal footing, then carried it through to a shipped, dev-ready page. This is the record of that revision.</div></div></div></section>
+      <section className="abstract reveal">
+        <div className="doc-row">
+          <aside className="margin-col">
+            <span className="sec-num">Abstract</span>
+          </aside>
+          <div className="content-col">
+            <div className="abstract-box">
+              <p className="abstract-problem">
+                <strong>The problem.</strong> Meridian's landing page opened with a full-height hero and buried services under a tab bar that visually favored one option. Most visitors never scrolled past the first screen.
+              </p>
+              <div className="abstract-channels">
+                <span className="traffic-pill">Library</span>
+                <span className="traffic-pill">Paid</span>
+                <span className="traffic-pill">Organic</span>
+              </div>
+              <p className="abstract-outcome">
+                <strong>The fix.</strong> Rebuilt the first fold to lead with services, equalized tab weight, and shipped a dev-ready page in under a month.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <figure className="fig">
+        <span className="tag">Figma — Design File</span>
+        <div className="fig-frame">
+          <iframe
+            style={{ border: '1px solid rgba(0, 0, 0, 0.1)' }}
+            width="800"
+            height="450"
+            src="https://embed.figma.com/design/1ueYeizVcNp9GNW1Ml90Mq/ASP-PPC-LP-Optimisation?node-id=0-1&embed-host=share"
+            allowFullScreen
+          />
+        </div>
+        <figcaption><b>Figma</b> — Design file for the Meridian PPC LP Optimisation project.</figcaption>
+      </figure>
 
       <Section number="I." label="The Brief" title="Services are the product, not the story">
         <p className="lead">Meridian sells manuscript editing to researchers. Traffic is mixed rather than single-channel — but every visitor, regardless of source, arrives already comparing options. The page&apos;s only job is to confirm the offer fast and move someone toward a quote — brand storytelling was never the point.</p>
