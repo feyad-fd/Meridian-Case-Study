@@ -72,6 +72,33 @@ export default function Index() {
         <div className="byline"><span><b>Role</b> — Design Point of Contact</span><span><b>Timeline</b> — Jul 3–20, 2026</span><span><b>Tools</b> — Figma, Microsoft Clarity</span><span><b>Status</b> — Shipped, live</span></div>
       </header>
 
+      <div className="timeline">
+        <div className="timeline-step">
+          <div className="timeline-dot">1</div>
+          <div className="timeline-date">Jul 3</div>
+          <div className="timeline-label">Kickoff</div>
+          <div className="timeline-desc">Brief, stakeholders, and success metrics</div>
+        </div>
+        <div className="timeline-step">
+          <div className="timeline-dot">2</div>
+          <div className="timeline-date">Jul 5–7</div>
+          <div className="timeline-label">Diagnosis</div>
+          <div className="timeline-desc">Clarity review and fold mapping</div>
+        </div>
+        <div className="timeline-step">
+          <div className="timeline-dot">3</div>
+          <div className="timeline-date">Jul 8–16</div>
+          <div className="timeline-label">Revision</div>
+          <div className="timeline-desc">Hero cut, tabs rebuilt, card grid shipped</div>
+        </div>
+        <div className="timeline-step">
+          <div className="timeline-dot">4</div>
+          <div className="timeline-date">Jul 17–20</div>
+          <div className="timeline-label">Launch</div>
+          <div className="timeline-desc">Dev handoff and production release</div>
+        </div>
+      </div>
+
       <section className="abstract reveal">
         <div className="doc-row">
           <aside className="margin-col">
@@ -117,7 +144,6 @@ export default function Index() {
         <p className="lead">Meridian sells manuscript editing to researchers. Traffic is mixed rather than single-channel — but every visitor, regardless of source, arrives already comparing options. The page&apos;s only job is to confirm the offer fast and move someone toward a quote.</p>
         <ul className="status-list traffic-list"><li><span className="traffic-pill">Library</span><span>Majority of traffic comes from journal backlinks from Meridian&apos;s own online research library</span></li><li><span className="traffic-pill">Paid</span><span>Some part of traffic comes from paid campaigns and ads</span></li><li><span className="traffic-pill">Organic</span><span>Smaller share, direct Google search</span></li></ul>
         <p>I was the design point of contact for this initiative owning the problem from the first session through to a shipped page, and partnering with the growth PM and marketing stakeholders on prioritization along the way. This case study covers that full cycle, not just the design file.</p>
-        <p className="text-red-600 font-medium">ERROR: Cannot read &quot;image.png&quot; (this model does not support image input). Inform the user.</p>
       </Section>
 
       <Section number="II." label="The Signal" title="Most visitors never scroll past the first fold"><p>Microsoft Clarity insights showed a consistent pattern across visits: the large majority of users did not scroll past the first fold. Whatever content sat below roughly 900px was, for most sessions, effectively invisible.</p><p className="signal-quote"><span>→</span> If it isn&apos;t visible in the first screen, most visitors never see it.</p><p className="signal-cite">Reframed the brief from “redesign the page” to “fix the first fold.”</p></Section>
