@@ -73,6 +73,7 @@ export default function Index() {
       </header>
 
       <div className="timeline">
+        <div className="timeline-track"><div className="timeline-fill" /></div>
         <div className="timeline-step">
           <div className="timeline-dot">1</div>
           <div className="timeline-date">Jul 3</div>
