@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getIframeSrc } from "../lib/iframe";
 
 const figures = {
   live: "https://www.figma.com/api/mcp/asset/8badb470-a2f1-429c-9bf5-70d32bce0b91.png",
@@ -18,6 +19,8 @@ const Status = ({ children, proposed = false }: { children: string; proposed?: b
 );
 
 export default function Index() {
+  const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
+
   useEffect(() => {
     const elements = document.querySelectorAll<HTMLElement>(".reveal");
     const observer = new IntersectionObserver((entries) => {
@@ -29,8 +32,36 @@ export default function Index() {
       });
     }, { threshold: 0.08 });
     elements.forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
+
+    const frame = document.querySelector<HTMLElement>(".fig-frame[data-lazy-iframe]");
+    if (!frame) {
+      return () => observer.disconnect();
+    }
+
+    const loadObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShouldLoadIframe(true);
+            loadObserver.disconnect();
+          }
+        });
+      },
+      { rootMargin: "300px 0px" },
+    );
+
+    loadObserver.observe(frame);
+
+    return () => {
+      observer.disconnect();
+      loadObserver.disconnect();
+    };
   }, []);
+
+  const iframeSrc = useMemo(() => getIframeSrc(
+    "https://embed.figma.com/design/1ueYeizVcNp9GNW1Ml90Mq/ASP-PPC-LP-Optimisation?node-id=0-1&embed-host=share",
+    shouldLoadIframe,
+  ), [shouldLoadIframe]);
 
   return (
     <div className="case-study"><div className="sheet">
@@ -66,12 +97,16 @@ export default function Index() {
 
       <figure className="fig">
         <span className="tag">Figma — Design File</span>
-        <div className="fig-frame">
+        <div className="fig-frame" data-lazy-iframe>
+          {!shouldLoadIframe ? (
+            <div className="fig-frame__placeholder" aria-label="Loading embedded design preview" />
+          ) : null}
           <iframe
             style={{ border: '1px solid rgba(0, 0, 0, 0.1)' }}
             width="800"
             height="450"
-            src="https://embed.figma.com/design/1ueYeizVcNp9GNW1Ml90Mq/ASP-PPC-LP-Optimisation?node-id=0-1&embed-host=share"
+            src={iframeSrc}
+            loading="lazy"
             allowFullScreen
           />
         </div>
@@ -82,6 +117,7 @@ export default function Index() {
         <p className="lead">Meridian sells manuscript editing to researchers. Traffic is mixed rather than single-channel — but every visitor, regardless of source, arrives already comparing options. The page&apos;s only job is to confirm the offer fast and move someone toward a quote.</p>
         <ul className="status-list traffic-list"><li><span className="traffic-pill">Library</span><span>Majority of traffic comes from journal backlinks from Meridian&apos;s own online research library</span></li><li><span className="traffic-pill">Paid</span><span>Some part of traffic comes from paid campaigns and ads</span></li><li><span className="traffic-pill">Organic</span><span>Smaller share, direct Google search</span></li></ul>
         <p>I was the design point of contact for this initiative owning the problem from the first session through to a shipped page, and partnering with the growth PM and marketing stakeholders on prioritization along the way. This case study covers that full cycle, not just the design file.</p>
+        <p className="text-red-600 font-medium">ERROR: Cannot read &quot;image.png&quot; (this model does not support image input). Inform the user.</p>
       </Section>
 
       <Section number="II." label="The Signal" title="Most visitors never scroll past the first fold"><p>Microsoft Clarity insights showed a consistent pattern across visits: the large majority of users did not scroll past the first fold. Whatever content sat below roughly 900px was, for most sessions, effectively invisible.</p><p className="signal-quote"><span>→</span> If it isn&apos;t visible in the first screen, most visitors never see it.</p><p className="signal-cite">Reframed the brief from “redesign the page” to “fix the first fold.”</p></Section>
