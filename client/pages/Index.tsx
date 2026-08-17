@@ -5,9 +5,9 @@ import "../case-study.css";
 type SectionProps = { number: string; label: string; title: string; children: React.ReactNode };
 
 const figures = {
-  live: "https://www.figma.com/api/mcp/asset/8badb470-a2f1-429c-9bf5-70d32bce0b91.png",
-  shipped: "https://www.figma.com/api/mcp/asset/612e6b0f-968f-44f0-aadb-fe3305817228.png",
-  comparison: "https://www.figma.com/api/mcp/asset/cc3d0db8-b8ef-4a21-9a87-3e4629cc9e51.png",
+  live: "/live.PNG",
+  shipped: "/shipped.PNG",
+  comparison: "/comparison.PNG",
 };
 
 function Section({ number, label, title, children }: SectionProps) {
@@ -81,7 +81,7 @@ export default function Index() {
 
     <div className="journey"><div><b>1</b><strong>Jul 3</strong><span>Kickoff</span><small>Brief, stakeholders, and success metrics</small></div><div><b>2</b><strong>Jul 5–7</strong><span>Diagnosis</span><small>Clarity review and fold mapping</small></div><div><b>3</b><strong>Jul 8–16</strong><span>Revision</span><small>Hero cut, tabs rebuilt, card grid shipped</small></div><div><b>4</b><strong>Jul 17–20</strong><span>Launch</span><small>Dev handoff and production release</small></div></div>
 
-    <section className="abstract"><div className="doc-row"><aside className="margin-col"><span className="sec-num">Abstract</span></aside><div className="content-col"><div className="abstract-box">The problem. The page opened with a big hero. Services were hidden below it, behind gray service tabs that made one option look already chosen. Most visitors never scrolled past this first screen.<br /><br /><span className="abstract-sources"><span>Library</span><span>Paid</span><span>Organic</span></span><br /><br />The fix. Rebuilt the first fold to lead with services, equalized tab weight, and shipped a dev-ready page in under a month.</div></div></div></section>
+    <section className="abstract"><div className="doc-row"><aside className="margin-col"><span className="sec-num">Abstract</span></aside><div className="content-col"><div className="abstract-box"><strong>The problem.</strong> The page opened with a big hero. Services were hidden below it, behind gray service tabs that made one option look already chosen. Most visitors never scrolled past this first screen.<br /><br /><span className="abstract-sources"><span>Library</span><span>Paid</span><span>Organic</span></span><br /><br /><strong>The fix.</strong> Rebuilt the first fold to lead with services, equalized tab weight, and shipped a dev-ready page in under a month.</div></div></div></section>
 
     <figure className="fig">
       <span className="tag">Figma - Design File</span>
