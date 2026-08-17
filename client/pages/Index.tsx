@@ -74,7 +74,7 @@ export default function Index() {
   return <div className="case-study"><div className="sheet">
     <header className="masthead">
       <div className="masthead-top"><span>Product Design - Case Study</span></div>
-      <h1 className="doc-title">Redlining<br />the <em>First Fold</em></h1>
+      <h1 className="doc-title">Optimising<br />the <em>First Fold</em></h1>
       <p className="doc-sub">Most people never scrolled past the top fold of the screen. So I optimised it to sell the services.</p>
       <div className="byline"><span>Role - Design Point of Contact</span><span>Timeline - Jul 3–20, 2026</span><span>Tools - Figma, Microsoft Clarity</span><span>Status - Shipped, live</span></div>
     </header>
