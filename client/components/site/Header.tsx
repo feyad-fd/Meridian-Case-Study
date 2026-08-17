@@ -5,9 +5,6 @@ export default function Header() {
     <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-background/70 border-b border-border/60">
       <div className="container flex items-center justify-between py-4">
         <Link to="/" className="flex items-center gap-2">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-tr from-mint via-sky to-lavender text-background shadow-md">
-            ✦
-          </span>
           <span className="font-display text-xl font-extrabold tracking-tight">Philonet</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
