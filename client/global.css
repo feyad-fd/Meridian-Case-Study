@@ -1,0 +1,147 @@
+/** @import must precede all other statements */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,450;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&family=Roboto:wght@300;400;500;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /**
+   * Tailwind CSS theme
+   * tailwind.config.ts expects the following color variables to be expressed as HSL values.
+   */
+  :root {
+    --background: 220 26% 98%;
+    --foreground: 230 35% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 230 35% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 230 35% 12%;
+
+    --primary: 245 84% 20%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 215 33% 96%;
+    --secondary-foreground: 230 35% 12%;
+
+    --muted: 220 26% 96%;
+    --muted-foreground: 230 10% 40%;
+
+    --accent: 230 40% 95%;
+    --accent-foreground: 230 35% 12%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 25% 90%;
+    --input: 220 25% 90%;
+    --ring: 246 86% 55%;
+
+    --radius: 1rem;
+
+    --sidebar-background: 220 26% 98%;
+    --sidebar-foreground: 230 35% 12%;
+    --sidebar-primary: 245 84% 20%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 230 40% 95%;
+    --sidebar-accent-foreground: 230 35% 12%;
+    --sidebar-border: 220 25% 90%;
+    --sidebar-ring: 246 86% 55%;
+
+    /* Pastel accents */
+    --mint: 160 70% 80%;
+    --coral: 12 88% 74%;
+    --lavender: 258 66% 86%;
+    --sky: 205 92% 84%;
+  }
+
+  .dark {
+    --background: 232 35% 7%;
+    --foreground: 210 40% 98%;
+
+    --card: 232 35% 9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 232 35% 9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 224 80% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 20% 18%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 220 20% 18%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 220 20% 18%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62% 35%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 20%;
+    --input: 220 20% 20%;
+    --ring: 224 90% 60%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --mint: 160 60% 65%;
+    --coral: 12 70% 60%;
+    --lavender: 258 60% 70%;
+    --sky: 205 80% 72%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Roboto", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+  }
+}
+
+@layer utilities {
+  .gradient-pill {
+    background-image: linear-gradient(90deg, hsl(var(--mint)) 0%, hsl(var(--sky)) 50%, hsl(var(--lavender)) 100%);
+    background-size: 200% 100%;
+  }
+  .space-surface {
+    background-image: radial-gradient(1200px 600px at 10% -10%, hsla(var(--sky),0.5) 0%, transparent 60%),
+      radial-gradient(800px 400px at 90% 0%, hsla(var(--lavender),0.5) 0%, transparent 60%),
+      radial-gradient(600px 300px at 30% 100%, hsla(var(--mint),0.5) 0%, transparent 60%);
+  }
+  .wave-top {
+    --c1: hsl(var(--sky));
+    --c2: hsl(var(--lavender));
+    background: linear-gradient(180deg, var(--c1), var(--c2));
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" preserveAspectRatio="none"><path fill="white" d="M0,64L48,85.3C96,107,192,149,288,165.3C384,181,480,171,576,149.3C672,128,768,96,864,85.3C960,75,1056,85,1152,101.3C1248,117,1344,139,1392,149.3L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"/></svg>') top/100% 100% no-repeat;
+    mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" preserveAspectRatio="none"><path fill="white" d="M0,64L48,85.3C96,107,192,149,288,165.3C384,181,480,171,576,149.3C672,128,768,96,864,85.3C960,75,1056,85,1152,101.3C1248,117,1344,139,1392,149.3L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"/></svg>') top/100% 100% no-repeat;
+  }
+
+  .star-field {
+    background-image: radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.7) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 70% 40%, rgba(255,255,255,0.6) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 40% 80%, rgba(255,255,255,0.5) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 85% 20%, rgba(255,255,255,0.5) 50%, transparent 51%);
+    background-repeat: repeat;
+  }
+}
+
+.case-study{--paper:#fbfaf6;--ink:#1c1b18;--soft:#5b584e;--faint:#8b8778;--red:#a8241c;--redsoft:#f4e1de;--green:#2c5f3f;--greensoft:#e4eee6;--navy:#22304a;--rule:#dad4c4;min-height:100vh;background:var(--paper);color:var(--ink);font:17px/1.65 'Public Sans',sans-serif}.case-study *{box-sizing:border-box}.sheet{max-width:1180px;margin:auto;padding:0 56px}.masthead{padding:52px 0 40px;border-bottom:2px solid var(--ink)}.masthead-top,.byline,.sec-num,.sec-title,.signal-cite,figcaption{font-family:'IBM Plex Mono',monospace}.masthead-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:34px;color:var(--faint);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase}.doc-title{max-width:14ch;margin:0 0 20px;font:600 clamp(40px,7vw,68px)/.98 Fraunces,serif}.doc-title em{color:var(--red);font-weight:450}.doc-sub{max-width:56ch;margin:0 0 30px;color:var(--soft);font-size:20px}.byline{display:flex;flex-wrap:wrap;gap:10px 28px;padding-top:18px;border-top:1px solid var(--rule);color:var(--soft);font-size:12.5px}.case-study section{padding:64px 0;border-top:1px solid var(--rule)}.case-study .abstract{padding:44px 0 56px;border:0}.doc-row{display:grid;grid-template-columns:200px minmax(0,1fr);gap:48px}.margin-col{position:sticky;top:28px;padding-top:6px}.sec-num{color:var(--faint);font-size:12px;letter-spacing:.08em;text-transform:uppercase}.sec-title{margin-top:6px;color:var(--navy);font-size:13px;font-weight:600}.content-col{max-width:640px}.content-col p{margin:0 0 18px}.content-col .lead{font-size:19px}.title{margin:0 0 22px;font:600 clamp(26px,3.4vw,34px)/1.15 Fraunces,serif}.abstract-box{max-width:760px;padding-left:24px;border-left:3px solid var(--red);font:italic 21px/1.6 Fraunces,serif}.status-list,.annot-list,.redline-list{margin:18px 0 0;padding:0;list-style:none}.status-list{display:grid;gap:14px}.status-list li{display:grid;grid-template-columns:92px 1fr;gap:14px;align-items:baseline;font-size:15.5px}.traffic-list{margin:22px 0}.status-pill,.traffic-pill{display:inline-block;width:max-content;min-width:72px;padding:3px 8px;border-radius:3px;font:600 10.5px 'IBM Plex Mono',monospace;letter-spacing:.06em;text-align:center;text-transform:uppercase}.status-pill.shipped{color:var(--green);background:var(--greensoft)}.traffic-pill{color:var(--soft);background:#eae6d9}.signal-quote{margin:26px 0 8px;color:var(--navy);font:600 clamp(24px,3vw,32px)/1.32 Fraunces,serif}.signal-quote span{color:var(--red)}.signal-cite{color:var(--faint);font-size:12px;letter-spacing:.08em;text-transform:uppercase}.fig{margin:30px 0 10px}.fig-frame{position:relative;overflow:hidden;border:1px solid #E5E7EB;border-radius:4px;background:#fff;box-shadow:6px 6px 0 #eae6d9}.fig-frame img{display:block;width:100%;border-radius:3px}.tag{display:inline-block;margin-bottom:10px;padding:3px 9px;border-radius:3px;font:11px 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase}.tag.before{color:var(--red);background:var(--redsoft)}.tag.after{color:var(--green);background:var(--greensoft)}figcaption{margin-top:14px;color:var(--soft);font-size:12.5px}.marker{position:absolute;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;box-shadow:0 0 0 3px #fff,0 0 0 4px var(--red);font:600 13px 'IBM Plex Mono',monospace}.marker.one{top:26%;left:47%}.marker.two{top:64.5%;left:32%}.annot-list{display:grid;gap:12px}.annot-list li{display:grid;grid-template-columns:26px 1fr;gap:12px;color:var(--soft);font-size:15.5px}.annot-list .num{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--red);color:#fff;font:600 12px 'IBM Plex Mono',monospace}.redline-list{margin:28px 0;border-top:1px solid var(--rule)}.redline-list li{display:grid;grid-template-columns:160px 1fr;gap:18px;padding:20px 0;border-bottom:1px solid var(--rule)}.redline-label{color:var(--faint);font:12px 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase}.redline-body del,.redline-body ins{display:block;padding:2px 5px;text-decoration:none}.redline-body del{margin-bottom:6px;color:var(--faint);background:var(--redsoft);text-decoration:line-through;text-decoration-color:var(--red)}.redline-body ins{border-left:2px solid var(--green);background:var(--greensoft)}.subhead{margin:36px 0 4px;font-size:16px}.stat-note,.principle p{color:var(--soft);font-size:15.5px}.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--ink)}.stat{padding:24px 20px;border-right:1px solid var(--ink)}.stat:last-child{border:0}.stat .num{display:block;color:var(--navy);font:600 clamp(22px,2.6vw,30px) 'IBM Plex Mono',monospace}.stat .lbl{display:block;margin-top:6px;color:var(--faint);font:11px 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase}.baseline-flag{display:inline-block;margin:22px 0 20px;padding:6px 12px;color:var(--red);background:var(--redsoft);font:12px 'IBM Plex Mono',monospace;letter-spacing:.05em;text-transform:uppercase}.principles{margin-top:10px;border-top:1px solid var(--rule)}.principle{display:grid;grid-template-columns:56px 1fr;gap:20px;padding:26px 0;border-bottom:1px solid var(--rule)}.rn{color:var(--red);font:italic 28px Fraunces,serif}.principle h3{margin:0 0 6px;font-size:17.5px}.principle p{margin:0}.colophon{margin-top:20px;padding:48px 0 70px;border-top:2px solid var(--ink)}.colophon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;color:var(--soft);font:12px/1.8 'IBM Plex Mono',monospace}.colophon-grid b{display:block;margin-bottom:6px;color:var(--ink);font-size:11px;letter-spacing:.06em;text-transform:uppercase}.fine{max-width:640px;margin-top:34px;color:var(--faint);font:11px/1.8 'IBM Plex Mono',monospace}@media(max-width:900px){.doc-row{grid-template-columns:1fr;gap:14px}.margin-col{position:static;padding:0}}@media(max-width:760px){.sheet{padding:0 22px}.masthead{padding-top:36px}.doc-sub{font-size:18px}.abstract-box{padding-left:18px;font-size:19px}}@media(max-width:700px){.redline-list li,.principle{grid-template-columns:1fr;gap:6px}.stat-strip{grid-template-columns:repeat(2,1fr)}.stat:nth-child(2){border-right:0}.stat:nth-child(-n+2){border-bottom:1px solid var(--ink)}.colophon-grid{grid-template-columns:1fr}.status-list li{grid-template-columns:76px 1fr;gap:10px}}.case-study{background:radial-gradient(circle at 88% 4%,rgba(234,230,217,.55),transparent 26rem),var(--paper)}.case-study .masthead{position:relative;padding-top:58px}.case-study .masthead:after{content:'';display:block;width:72px;height:4px;margin-top:34px;background:var(--red);border-radius:99px}.case-study .masthead-top span:first-child{color:var(--red);font-weight:600}.case-study .doc-sub{letter-spacing:-.01em}.case-study .byline{row-gap:12px}.case-study .abstract-box{position:relative;padding:28px 30px 28px 28px;border:1px solid #e5e7eb;border-left:4px solid var(--red);border-radius:6px;background:rgba(255,255,255,.46);box-shadow:8px 8px 0 rgba(234,230,217,.7)}.case-study .title{letter-spacing:-.015em}.case-study .content-col>p:first-of-type{color:#292822}.case-study .fig-frame{box-shadow:7px 7px 0 rgba(234,230,217,.85)}.case-study .fig-frame:hover{box-shadow:7px 7px 0 rgba(234,230,217,.85)}.case-study .stat-strip{border-radius:5px;overflow:hidden;background:rgba(255,255,255,.32)}.case-study .principles{background:rgba(255,255,255,.2)}.case-study .traffic-list li,.case-study .status-list li{display:block;font-size:14px}.case-study .timeline-card{padding:13px 16px}.case-study .timeline-card h4{font-size:13px}.case-study .timeline-card ul{font-size:11.5px}.case-study .timeline-block h3{font-size:19px}.case-study .timeline-block{margin-top:42px}.case-study .timeline-block h3{margin:0 0 22px;color:var(--ink);font:600 21px/1.2 'Public Sans',sans-serif}.case-study .timeline-block h3:after{content:'';display:block;width:44px;height:3px;margin-top:10px;border-radius:99px;background:var(--ink)}.case-study .timeline-list{position:relative;margin-left:16px;padding:2px 0 2px 28px;border-left:1px solid #e5e7eb}.case-study .timeline-item{position:relative;padding:0 0 16px}.case-study .timeline-item:last-child{padding-bottom:0}.case-study .timeline-item:before{content:'';position:absolute;top:22px;left:-33px;width:9px;height:9px;border:2px solid var(--paper);border-radius:50%;background:#9ca3af;box-shadow:0 0 0 1px #d1d5db}.case-study .timeline-card{padding:16px 18px;border:1px solid #e5e7eb;border-radius:10px;background:rgba(255,255,255,.72);box-shadow:0 3px 10px rgba(28,27,24,.04)}.case-study .timeline-card time{color:var(--soft);font:11px 'IBM Plex Mono',monospace}.case-study .timeline-card h4{margin:3px 0 8px;font-size:14px;line-height:1.35}.case-study .timeline-tags{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 9px}.case-study .timeline-tag{padding:3px 7px;border-radius:2px;color:#fff;font:500 11px 'Public Sans',sans-serif}.case-study .timeline-tag.decision{background:#21945f}.case-study .timeline-tag.insight{background:#08758c}.case-study .timeline-tag.feedback{background:#e61b9b}.case-study .timeline-card ul{margin:0;padding-left:18px;color:var(--soft);font-size:12px;line-height:1.5}.case-study .timeline-card li+li{margin-top:7px}@media(max-width:700px){.case-study .timeline-list{margin-left:8px;padding-left:22px}.case-study .timeline-item:before{left:-28px}.case-study .timeline-card{padding:14px}}
