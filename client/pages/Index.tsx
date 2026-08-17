@@ -1,3 +1,5 @@
+import { useEffect, useMemo, useState } from "react";
+import { getIframeSrc } from "../lib/iframe";
 import "../case-study.css";
 
 type SectionProps = { number: string; label: string; title: string; children: React.ReactNode };
@@ -25,6 +27,50 @@ function Stat({ value, label }: { value: string; label: string }) {
 }
 
 export default function Index() {
+  const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
+
+  useEffect(() => {
+    const elements = document.querySelectorAll<HTMLElement>(".reveal");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    elements.forEach((element) => observer.observe(element));
+
+    const frame = document.querySelector<HTMLElement>(".fig-frame[data-lazy-iframe]");
+    if (!frame) {
+      return () => observer.disconnect();
+    }
+
+    const loadObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShouldLoadIframe(true);
+            loadObserver.disconnect();
+          }
+        });
+      },
+      { rootMargin: "300px 0px" },
+    );
+
+    loadObserver.observe(frame);
+
+    return () => {
+      observer.disconnect();
+      loadObserver.disconnect();
+    };
+  }, []);
+
+  const iframeSrc = useMemo(() => getIframeSrc(
+    "https://embed.figma.com/design/1ueYeizVcNp9GNW1Ml90Mq/ASP-PPC-LP-Optimisation?node-id=0-1&embed-host=share",
+    shouldLoadIframe,
+  ), [shouldLoadIframe]);
+
   return <div className="case-study"><div className="sheet">
     <header className="masthead">
       <div className="masthead-top"><span>Product Design - Case Study</span></div>
@@ -36,6 +82,24 @@ export default function Index() {
     <div className="journey"><div><b>1</b><strong>Jul 3</strong><span>Kickoff</span><small>Brief, stakeholders, and success metrics</small></div><div><b>2</b><strong>Jul 5–7</strong><span>Diagnosis</span><small>Clarity review and fold mapping</small></div><div><b>3</b><strong>Jul 8–16</strong><span>Revision</span><small>Hero cut, tabs rebuilt, card grid shipped</small></div><div><b>4</b><strong>Jul 17–20</strong><span>Launch</span><small>Dev handoff and production release</small></div></div>
 
     <section className="abstract"><div className="doc-row"><aside className="margin-col"><span className="sec-num">Abstract</span></aside><div className="content-col"><div className="abstract-box">The problem. The page opened with a big hero. Services were hidden below it, behind gray service tabs that made one option look already chosen. Most visitors never scrolled past this first screen.<br /><br /><span className="abstract-sources"><span>Library</span><span>Paid</span><span>Organic</span></span><br /><br />The fix. Rebuilt the first fold to lead with services, equalized tab weight, and shipped a dev-ready page in under a month.</div></div></div></section>
+
+    <figure className="fig">
+      <span className="tag">Figma - Design File</span>
+      <div className="fig-frame" data-lazy-iframe>
+        {!shouldLoadIframe ? (
+          <div className="fig-frame__placeholder" aria-label="Loading embedded design preview" />
+        ) : null}
+        <iframe
+          style={{ border: '1px solid rgba(0, 0, 0, 0.1)' }}
+          width="800"
+          height="450"
+          src={iframeSrc}
+          loading="lazy"
+          allowFullScreen
+        />
+      </div>
+      <figcaption><b>Figma</b> - Design file for the Meridian PPC LP Optimisation project.</figcaption>
+    </figure>
 
     <Section number="I." label="The Brief" title="Services are the product, not the story"><p className="lead">Meridian sells manuscript editing to researchers. Traffic is mixed rather than single-channel - but every visitor, regardless of source, arrives already comparing options. The page&apos;s only job is to confirm the offer fast and move someone toward a quote.</p><ul className="status-list"><li>Library<br />Majority of traffic comes from journal backlinks from Meridian&apos;s own online research library</li><li>Paid<br />Some part of traffic comes from paid campaigns and ads</li><li>Organic<br />Smaller share, direct Google search</li></ul><p>I was the product designer and design point of contact. I owned this from the first research session to the shipped page, working closely with the growth PM and marketing team. This case study covers that whole journey.</p></Section>
 
