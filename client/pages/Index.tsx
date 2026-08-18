@@ -5,9 +5,9 @@ import "../case-study.css";
 type SectionProps = { number: string; label: string; title: string; children: React.ReactNode };
 
 const figures = {
-  live: "/live.PNG",
-  shipped: "/shipped.PNG",
-  comparison: "/comparison.PNG",
+  live: "/live.png",
+  shipped: "/shipped.png",
+  comparison: "/comparison.png",
 };
 
 function Section({ number, label, title, children }: SectionProps) {
