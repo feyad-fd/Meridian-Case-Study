@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Optimising the First Fold — Meridian Editorial Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --green-dark:#1a4a3a;
+    --green-mid:#3a5a50;
+    --green-pale-bg:#ebf9f4;
+    --green-pale-bg-2:#f7fcfb;
+    --green-border:#94d1b5;
+    --green-border-2:#b5ead7;
+    --green-border-3:#c4eddf;
+    --green-border-4:#c4e9db;
+    --green-border-5:#d8f3ea;
+    --mint-header:#82eda6;
+    --pink-pill:#fccddc;
+    --pink-accent:#ff6b8b;
+    --pink-bg:#fef5f8;
+    --pink-quote-bg:#fff5f5;
+    --red-accent:#fe5e5e;
+    --coral-badge:#ff5b7f;
+    --gold-border:#e8d090;
+    --cream-bg:#fdfbf3;
+    --ink:#001428;
+    --text-dark:#262626;
+    --white:#ffffff;
+  }
+
+  *{ box-sizing:border-box; }
+  html{
+    scroll-padding-top:88px;
+  }
+  @media (prefers-reduced-motion: no-preference){
+    html{ scroll-behavior:smooth; }
+  }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:'Poppins', sans-serif;
+    color:var(--text-dark);
+    background:var(--white);
+    -webkit-font-smoothing:antialiased;
+  }
+  img{ display:block; max-width:100%; }
+  p{ margin:0; }
+  strong{ font-weight:800; }
+
+  :focus-visible{
+    outline:2px solid var(--pink-accent);
+    outline-offset:3px;
+    border-radius:4px;
+  }
+
+  /* reveal-on-scroll: content is visible by default (no-JS fallback);
+     only fades/animates once JS marks the page ready */
+  .reveal{ opacity:1; }
+  body.js-ready .reveal{
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  body.js-ready .reveal.in-view{
+    opacity:1;
+    transform:none;
+  }
+  @media (prefers-reduced-motion: reduce){
+    body.js-ready .reveal{ opacity:1 !important; transform:none !important; transition:none !important; }
+  }
+
+  .page{ width:100%; overflow-x:hidden; }
+
+  /* ---------- shared bits ---------- */
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    align-self:flex-start;
+    flex:0 0 auto;
+    background:var(--pink-pill);
+    color:var(--ink);
+    border-radius:999px;
+    padding:10px 24px;
+    font-weight:800;
+    font-size:16px;
+    letter-spacing:0.77px;
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+
+  .section{
+    width:100%;
+    padding:60px 70px;
+  }
+
+  .eyebrow-stack{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    align-items:flex-start;
+    width:100%;
+  }
+
+  /* ---------- header ---------- */
+  .site-header{
+    width:100%;
+    background:var(--green-dark);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 24px;
+    position:sticky;
+    top:0;
+    z-index:50;
+    box-shadow:0 0 0 rgba(0,20,40,0);
+    transition:box-shadow .3s ease;
+  }
+  .site-header.scrolled{
+    box-shadow:0 4px 18px rgba(0,20,40,0.10);
+  }
+  .site-header .logo{
+    font-weight:800;
+    font-size:14px;
+    letter-spacing:0.44px;
+    text-transform:uppercase;
+    color:var(--white);
+    margin:0;
+    white-space:nowrap;
+    text-decoration:none;
+    transition:opacity .2s ease;
+  }
+  .site-header .logo:hover,
+  .site-header .logo:focus-visible{
+    opacity:0.7;
+  }
+  .site-header nav{
+    display:flex;
+    gap:20px;
+    align-items:flex-start;
+  }
+  .site-header nav a{
+    font-weight:800;
+    font-size:11px;
+    letter-spacing:0.44px;
+    line-height:18.15px;
+    text-transform:uppercase;
+    color:var(--white);
+    white-space:nowrap;
+    text-decoration:none;
+    position:relative;
+    padding-bottom:3px;
+    transition:color .2s ease;
+  }
+  .site-header nav a::after{
+    content:'';
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:2px;
+    background:var(--mint-header);
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform .25s ease;
+  }
+  .site-header nav a:hover,
+  .site-header nav a:focus-visible,
+  .site-header nav a.active{
+    color:var(--mint-header);
+  }
+  .site-header nav a:hover::after,
+  .site-header nav a:focus-visible::after,
+  .site-header nav a.active::after{
+    transform:scaleX(1);
+  }
+  .header-badge{
+    background:var(--pink-pill);
+    border:3px solid var(--ink);
+    border-radius:999px;
+    padding:10px 24px;
+    font-weight:800;
+    font-size:16px;
+    letter-spacing:0.77px;
+    text-transform:uppercase;
+    color:var(--ink);
+    white-space:nowrap;
+    text-decoration:none;
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    background:var(--green-pale-bg);
+    padding:60px 58px;
+  }
+  .hero-inner{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+    align-items:flex-start;
+    width:100%;
+  }
+  .hero-title{
+    font-family:'Cooper Black','Cooper BT',Georgia,serif;
+    font-weight:400;
+    text-transform:uppercase;
+    line-height:70px;
+    font-size:64px;
+    margin:0;
+  }
+  .hero-title span{ display:block; }
+  .hero-title .line1{ color:var(--green-dark); }
+  .hero-title .line2{ color:var(--pink-accent); }
+
+  .hero-sub{
+    font-weight:600;
+    font-size:19px;
+    line-height:31.713px;
+    color:var(--ink);
+    max-width:600px;
+  }
+  .hero-sub p{ margin:0; }
+
+  .hero-meta{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    border-top:1px solid var(--green-border-3);
+    padding-top:26.25px;
+    flex-wrap:wrap;
+    gap:24px;
+  }
+  .hero-meta .meta-item{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    align-items:flex-start;
+  }
+  .hero-meta .meta-label{
+    font-weight:700;
+    font-size:11px;
+    letter-spacing:0.77px;
+    line-height:18.15px;
+    text-transform:uppercase;
+    color:var(--green-dark);
+  }
+  .hero-meta .meta-value{
+    font-weight:400;
+    font-size:13px;
+    line-height:21.45px;
+    color:var(--text-dark);
+  }
+
+  /* ---------- abstract ---------- */
+  .abstract{
+    background:var(--pink-bg);
+  }
+  .abstract-inner{
+    display:flex;
+    gap:40px;
+    align-items:center;
+    width:100%;
+    flex-wrap:wrap;
+  }
+  .abstract-left{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    align-items:flex-start;
+    flex:1 1 480px;
+  }
+  .abstract-heading-block{
+    display:flex;
+    flex-direction:column;
+    gap:32px;
+    align-items:flex-start;
+  }
+  .abstract-heading-block .problem{
+    font-weight:700;
+    text-transform:uppercase;
+    font-size:58px;
+    line-height:59.39px;
+    letter-spacing:-2px;
+    color:var(--green-dark);
+    margin:0;
+  }
+  .abstract-heading-block .problem-sub{
+    font-weight:700;
+    text-transform:uppercase;
+    font-size:32px;
+    line-height:50.452px;
+    color:var(--pink-accent);
+  }
+  .abstract-left p.body{
+    font-weight:400;
+    font-size:15px;
+    line-height:24.75px;
+    color:var(--text-dark);
+    max-width:630px;
+  }
+  .abstract-right{
+    flex:1 1 380px;
+    align-self:stretch;
+    display:flex;
+  }
+  .fix-card{
+    background:var(--pink-pill);
+    border-radius:16px;
+    padding:40px;
+    display:flex;
+    gap:40px;
+    align-items:flex-start;
+    flex:1;
+  }
+  .fix-card .fix-label{
+    font-weight:700;
+    font-size:16px;
+    letter-spacing:0.84px;
+    text-transform:uppercase;
+    color:var(--green-dark);
+    white-space:nowrap;
+    line-height:19.8px;
+  }
+  .fix-card .fix-text{
+    font-weight:600;
+    font-size:20px;
+    line-height:32px;
+    color:var(--text-dark);
+    flex:1;
+  }
+
+  /* ---------- project journey ---------- */
+  .journey{
+    background:var(--green-pale-bg-2);
+  }
+  .journey-inner{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+    width:100%;
+  }
+  .journey-heading{
+    position:relative;
+    max-width:750px;
+    height:101px;
+    text-transform:uppercase;
+  }
+  .journey-heading p{
+    position:absolute;
+    left:0;
+    font-weight:700;
+    font-size:48px;
+    letter-spacing:-0.96px;
+    line-height:50.452px;
+    white-space:nowrap;
+    margin:0;
+  }
+  .journey-heading .line1{ top:-9px; color:var(--green-dark); }
+  .journey-heading .line2{ top:42px; color:var(--red-accent); }
+
+  .timeline{
+    display:flex;
+    gap:14px;
+    width:100%;
+    flex-wrap:wrap;
+  }
+  .timeline-card{
+    background:var(--green-pale-bg);
+    border:1px solid var(--green-border);
+    border-radius:20px;
+    padding:24px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    flex:1 1 220px;
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .timeline-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 12px 28px rgba(26,74,58,0.12);
+    border-color:var(--green-dark);
+  }
+  .timeline-card .num-badge{
+    background:var(--green-dark);
+    color:#b5ead7;
+    border-radius:15px;
+    padding:2px 12px 3px;
+    font-weight:800;
+    font-size:15px;
+    line-height:24.75px;
+    align-self:flex-start;
+  }
+  .timeline-card .tc-date{
+    font-weight:800;
+    font-size:11px;
+    letter-spacing:0.77px;
+    text-transform:uppercase;
+    color:var(--green-dark);
+    line-height:18.15px;
+    margin-bottom:3.5px;
+  }
+  .timeline-card .tc-title{
+    font-weight:800;
+    font-size:22px;
+    color:var(--green-dark);
+    line-height:25.3px;
+    margin-bottom:3.5px;
+  }
+  .timeline-card .tc-desc{
+    font-weight:400;
+    font-size:13px;
+    color:var(--text-dark);
+    line-height:19.5px;
+  }
+
+  /* ---------- brief ---------- */
+  .brief-inner{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+    width:100%;
+  }
+  .brief-heading{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    text-transform:uppercase;
+    font-weight:700;
+    font-size:48px;
+    letter-spacing:-0.96px;
+    line-height:50.452px;
+  }
+  .brief-heading .line1{ color:var(--green-dark); }
+  .brief-heading .line2{ color:var(--red-accent); }
+  .brief-inner > p.body{
+    font-weight:400;
+    font-size:16px;
+    line-height:27.2px;
+    color:var(--text-dark);
+    max-width:741px;
+  }
+  .brief-inner > p.body-2{
+    font-weight:400;
+    font-size:16px;
+    line-height:27.2px;
+    color:var(--green-mid);
+    max-width:900px;
+  }
+  .brief-cards{
+    display:flex;
+    gap:16.5px;
+    width:100%;
+    flex-wrap:wrap;
+  }
+  .brief-card{
+    background:var(--green-pale-bg);
+    border:1px solid var(--green-border-2);
+    border-radius:16px;
+    padding:24px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    flex:1 1 220px;
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .brief-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 12px 28px rgba(26,74,58,0.10);
+    border-color:var(--green-dark);
+  }
+  .brief-card h3{
+    font-weight:800;
+    font-size:22px;
+    color:var(--green-dark);
+    margin:0;
+  }
+  .brief-card p{
+    font-weight:400;
+    font-size:13px;
+    line-height:20.15px;
+    color:var(--text-dark);
+  }
+
+  /* ---------- signal ---------- */
+  .signal-inner{
+    display:flex;
+    flex-direction:column;
+    gap:28.5px;
+    width:100%;
+    max-width:950px;
+  }
+  .signal-heading{
+    font-weight:700;
+    font-size:48px;
+    letter-spacing:-0.96px;
+    line-height:50.452px;
+    text-transform:uppercase;
+    color:var(--green-dark);
+    margin:0;
+    max-width:900px;
+  }
+  .signal-heading .accent{ color:var(--red-accent); }
+  .signal-body{
+    font-weight:400;
+    font-size:15px;
+    line-height:24.75px;
+    color:var(--text-dark);
+  }
+  .quote-box{
+    background:var(--pink-quote-bg);
+    border:1px solid var(--green-border-4);
+    border-radius:16px;
+    padding:16px 24px;
+    width:100%;
+  }
+  .quote-box p{
+    font-weight:900;
+    font-size:22px;
+    line-height:29.7px;
+    color:var(--green-dark);
+  }
+  .signal-goal{
+    font-weight:700;
+    font-size:20px;
+    line-height:24.75px;
+    color:var(--green-dark);
+  }
+
+  /* ---------- diagnosis ---------- */
+  .diagnosis{
+    background:var(--pink-bg);
+  }
+  .diagnosis-inner{
+    display:flex;
+    flex-direction:column;
+    gap:26.6px;
+    width:100%;
+  }
+  .diagnosis-heading{
+    font-weight:700;
+    font-size:48px;
+    letter-spacing:-0.96px;
+    line-height:50.452px;
+    text-transform:uppercase;
+    color:var(--green-dark);
+    margin:0;
+    max-width:900px;
+  }
+  .diagnosis-inner > .eyebrow-stack > p.body{
+    font-weight:400;
+    font-size:16px;
+    line-height:27.2px;
+    color:var(--text-dark);
+    max-width:587px;
+  }
+
+  .figure-card{
+    background:var(--white);
+    border:1px solid var(--gold-border);
+    border-radius:18px;
+    overflow:hidden;
+    width:100%;
+    transition:box-shadow .3s ease;
+  }
+  .figure-card:hover{
+    box-shadow:0 16px 36px rgba(0,20,40,0.10);
+  }
+  .figure-card .figure-img-wrap{
+    background:var(--cream-bg);
+    padding:24px;
+    display:flex;
+    justify-content:center;
+  }
+  .figure-card .figure-img-wrap .frame{
+    width:100%;
+    aspect-ratio:1280/900;
+    border-radius:8px;
+    overflow:hidden;
+    position:relative;
+  }
+  .figure-card .figure-img-wrap img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    border-radius:8px;
+    transition:transform .5s ease;
+  }
+  .figure-card:hover .figure-img-wrap img{
+    transform:scale(1.025);
+  }
+  .img-marker{
+    position:absolute;
+    width:56px;
+    height:56px;
+    border-radius:28px;
+    background:var(--coral-badge);
+    box-shadow:0 6px 8px rgba(255,91,127,0.25);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--white);
+    font-weight:800;
+    font-size:28px;
+    z-index:2;
+  }
+  @media (max-width: 700px){
+    .img-marker{ width:36px; height:36px; border-radius:18px; font-size:18px; }
+  }
+  .figure-caption{
+    border-top:1px solid var(--gold-border);
+    padding:16px 46px 17px 18px;
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+  .figure-caption .fig-title{
+    font-weight:700;
+    font-size:13px;
+    color:var(--green-dark);
+    line-height:21.45px;
+  }
+  .figure-caption .fig-desc{
+    font-weight:400;
+    font-size:13px;
+    color:var(--green-mid);
+    line-height:21.45px;
+    max-width:694px;
+  }
+
+  .numbered-list{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    width:100%;
+  }
+  .numbered-item{
+    display:flex;
+    gap:16px;
+    align-items:center;
+    width:100%;
+  }
+  .coral-badge{
+    background:var(--coral-badge);
+    box-shadow:0 6px 8px rgba(255,91,127,0.25);
+    border-radius:28px;
+    width:56px;
+    height:56px;
+    min-width:56px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--white);
+    font-weight:800;
+    font-size:28px;
+  }
+  .numbered-item .ni-content{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    padding:10px 0;
+    flex:1;
+  }
+  .numbered-item .ni-title{
+    font-weight:700;
+    font-size:15px;
+    color:var(--green-dark);
+    line-height:24.75px;
+  }
+  .numbered-item .ni-desc{
+    font-weight:400;
+    font-size:15px;
+    color:var(--text-dark);
+    line-height:24.75px;
+  }
+
+  /* ---------- solution / fix ---------- */
+  .solution{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+  }
+  .solution-heading{
+    font-weight:700;
+    text-transform:none;
+    font-size:40px;
+    letter-spacing:-0.8px;
+    line-height:1.1;
+    color:var(--green-dark);
+    margin:0;
+    max-width:900px;
+  }
+  .solution-heading .accent{ color:var(--pink-accent); }
+  .solution-body{
+    font-weight:400;
+    font-size:18px;
+    line-height:1.6;
+    color:var(--green-mid);
+    max-width:900px;
+  }
+  .solution .figure-caption{
+    padding:16px 75px 15px 18px;
+  }
+
+  .revision-box{
+    background:var(--green-pale-bg-2);
+    border:1px solid var(--green-border-5);
+    border-radius:24px;
+    padding:32px;
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+    width:100%;
+  }
+  .revision-box h4{
+    font-weight:800;
+    font-size:16px;
+    text-transform:uppercase;
+    color:var(--green-dark);
+    margin:0;
+  }
+  .revision-grid{
+    display:flex;
+    gap:32px;
+    width:100%;
+    flex-wrap:wrap;
+  }
+  .rev-item{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    flex:1 1 220px;
+    transition:transform .2s ease;
+  }
+  .rev-item:hover{
+    transform:translateY(-2px);
+  }
+  .rev-item .rev-title{
+    font-weight:700;
+    font-size:15px;
+    color:var(--green-dark);
+  }
+  .rev-pill{
+    display:inline-flex;
+    align-items:flex-start;
+    border-radius:4px;
+    padding:4px 8px;
+    font-weight:400;
+    font-size:12px;
+    width:fit-content;
+    transition:background .2s ease;
+  }
+  .rev-pill.before{ background:var(--pink-quote-bg); color:var(--pink-accent); }
+  .rev-pill.after{ background:var(--green-pale-bg); color:var(--green-dark); }
+  .rev-item:hover .rev-pill.before{ background:#ffe9ee; }
+  .rev-item:hover .rev-pill.after{ background:#ddf3ea; }
+
+  /* ---------- lessons ---------- */
+  .lessons{
+    padding:80px 100px;
+    display:flex;
+    flex-direction:column;
+    gap:40px;
+  }
+  .lessons-heading{
+    font-weight:700;
+    font-size:40px;
+    line-height:1.1;
+    color:var(--green-dark);
+    margin:0;
+    max-width:1000px;
+  }
+  .lessons-heading .accent{ color:var(--pink-accent); }
+  .lessons-list{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+    width:100%;
+  }
+  .lesson-item{
+    display:flex;
+    gap:24px;
+    align-items:flex-start;
+    width:100%;
+  }
+  .lesson-item .numeral{
+    font-weight:700;
+    font-size:28px;
+    color:var(--pink-accent);
+    min-width:34px;
+    transition:color .2s ease, transform .2s ease;
+    display:inline-block;
+  }
+  .lesson-item:hover .numeral{
+    color:var(--red-accent);
+    transform:translateX(2px);
+  }
+  .lesson-item .lesson-content{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    flex:1;
+    max-width:1044px;
+  }
+  .lesson-item .lesson-title{
+    font-weight:700;
+    font-size:16px;
+    color:var(--green-dark);
+  }
+  .lesson-item .lesson-desc{
+    font-weight:400;
+    font-size:14px;
+    line-height:1.5;
+    color:var(--green-mid);
+  }
+  .site-footer{
+    background:var(--green-dark);
+    color:var(--white);
+    padding:48px 70px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:32px;
+  }
+  .footer-message{
+    font-family:'Cooper Black','Cooper BT',Georgia,serif;
+    font-size:32px;
+    line-height:1.1;
+    color:var(--mint-header);
+    margin:0;
+  }
+  .footer-links{
+    display:flex;
+    align-items:center;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .footer-links a{
+    color:var(--white);
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:0.44px;
+    text-decoration:none;
+    text-transform:uppercase;
+    transition:color .2s ease;
+  }
+  .footer-links a:hover,
+  .footer-links a:focus-visible{
+    color:var(--mint-header);
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 900px){
+    .section, .hero, .abstract, .journey, .diagnosis{ padding:40px 24px; }
+    .lessons{ padding:56px 24px; }
+    .site-footer{ padding:40px 24px; align-items:flex-start; flex-direction:column; }
+    .hero-title{ font-size:42px; line-height:46px; }
+    .abstract-heading-block .problem{ font-size:38px; line-height:40px; }
+    .journey-heading{ height:auto; position:static; }
+    .journey-heading p{ position:static; }
+    .brief-heading, .signal-heading, .diagnosis-heading{ font-size:32px; line-height:36px; }
+    .solution-heading, .lessons-heading{ font-size:28px; }
+    .site-header{ flex-wrap:wrap; gap:12px; }
+  }
+</style>
+</head>
+<body>
+<div class="page" id="top">
+
+  <!-- Header -->
+  <header class="site-header">
+    <a class="logo" href="#top">Meridian Editorial</a>
+    <nav>
+      <a href="#brief">Brief</a>
+      <a href="#diagnosis">Diagnosis</a>
+      <a href="#revision">Revision</a>
+      <a href="#reflection">Reflection</a>
+    </nav>
+    <a class="header-badge" href="https://www.figma.com/design/1ueYeizVcNp9GNW1Ml90Mq/Meridian-PPC-LP-Optimisation?node-id=0-1&amp;t=SQ5DrrxjK2bwkkc2-1" target="_blank" rel="noopener noreferrer">View Design</a>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero reveal">
+    <div class="hero-inner">
+      <div class="pill">Product Design · Case Study</div>
+      <h1 class="hero-title">
+        <span class="line1">Optimising the</span>
+        <span class="line2">First Fold</span>
+      </h1>
+      <div class="hero-sub">
+        <p>Most people never scrolled past the top fold of the screen.</p>
+        <p>So I optimised it to sell the services.</p>
+      </div>
+      <div class="hero-meta">
+        <div class="meta-item">
+          <span class="meta-label">Role</span>
+          <span class="meta-value">Design Point of Contact</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Timeline</span>
+          <span class="meta-value">Jul 3–20, 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Tools</span>
+          <span class="meta-value">Figma, Microsoft Clarity</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Status</span>
+          <span class="meta-value">Shipped, live</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Abstract -->
+  <section class="section abstract reveal">
+    <div class="abstract-inner">
+      <div class="abstract-left">
+        <div class="pill">Abstract</div>
+        <div class="abstract-heading-block">
+          <p class="problem">The problem.</p>
+          <p class="problem-sub">Services were hidden below the fold.</p>
+        </div>
+        <p class="body">The page opened with a big hero. Services were hidden below it, behind gray service tabs that made one option look already chosen. Most visitors never scrolled past this first screen.</p>
+      </div>
+      <div class="abstract-right">
+        <div class="fix-card">
+          <span class="fix-label">The fix</span>
+          <p class="fix-text">Rebuilt the first fold to lead with services, equalized tab weight, and shipped a dev-ready page in under a month.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project journey -->
+  <section class="section journey reveal">
+    <div class="journey-inner">
+      <div class="eyebrow-stack">
+        <div class="pill">Project journey</div>
+        <div class="journey-heading">
+          <p class="line1">From first signal to</p>
+          <p class="line2">production release.</p>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-card">
+          <span class="num-badge">1</span>
+          <div>
+            <div class="tc-date">Jul 3</div>
+            <div class="tc-title">Kickoff</div>
+            <div class="tc-desc">Brief, stakeholders, and success metrics</div>
+          </div>
+        </div>
+        <div class="timeline-card">
+          <span class="num-badge">2</span>
+          <div>
+            <div class="tc-date">Jul 5–7</div>
+            <div class="tc-title">Diagnosis</div>
+            <div class="tc-desc">Clarity review and fold mapping</div>
+          </div>
+        </div>
+        <div class="timeline-card">
+          <span class="num-badge">3</span>
+          <div>
+            <div class="tc-date">Jul 8–16</div>
+            <div class="tc-title">Revision</div>
+            <div class="tc-desc">Hero cut, tabs rebuilt, card grid shipped</div>
+          </div>
+        </div>
+        <div class="timeline-card">
+          <span class="num-badge">4</span>
+          <div>
+            <div class="tc-date">Jul 17–20</div>
+            <div class="tc-title">Launch</div>
+            <div class="tc-desc">Dev handoff and production release</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- I. The Brief -->
+  <section class="section brief-inner reveal" id="brief">
+    <div class="eyebrow-stack">
+      <div class="pill">I. The Brief</div>
+      <div class="brief-heading">
+        <span class="line1">Services are the product,</span>
+        <span class="line2">not the story.</span>
+      </div>
+      <p class="body">Meridian sells manuscript editing to researchers. Majority of traffic came from following channels:</p>
+    </div>
+    <div class="brief-cards">
+      <div class="brief-card">
+        <h3>Library</h3>
+        <p>Majority of traffic comes from journal backlinks from Meridian's own online research library</p>
+      </div>
+      <div class="brief-card">
+        <h3>Paid</h3>
+        <p>Some part of traffic comes from paid campaigns and ads</p>
+      </div>
+      <div class="brief-card">
+        <h3>Organic</h3>
+        <p>Smaller share, direct Google search</p>
+      </div>
+    </div>
+    <p class="body-2">I was the product designer and design point of contact. I owned this from the first research session to the shipped page, working closely with the PM, stakeholders, developers and marketing team. This case study covers that whole journey.</p>
+  </section>
+
+  <!-- II. The Signal -->
+  <section class="section signal reveal">
+    <div class="signal-inner">
+      <div class="eyebrow-stack">
+        <div class="pill">II. The Signal</div>
+        <p class="signal-heading">Most visitors never scroll past <span class="accent">the first fold</span></p>
+        <p class="signal-body">Microsoft Clarity insights showed a consistent pattern across visits: the large majority of users did not scroll past the first fold. Whatever content sat below roughly 900px was, for most sessions, effectively invisible.</p>
+      </div>
+      <div class="quote-box">
+        <p><strong>→ If it isn't visible in the first screen, most visitors never see it.</strong></p>
+      </div>
+      <p class="signal-goal"><strong>The goal was clear: fix the first fold and reduce drop-offs.</strong></p>
+    </div>
+  </section>
+
+  <!-- III. The Diagnosis -->
+  <section class="section diagnosis reveal" id="diagnosis">
+    <div class="diagnosis-inner">
+      <div class="eyebrow-stack">
+        <div class="pill">III. The Diagnosis</div>
+        <p class="diagnosis-heading">The hero and the tabs, killed the fold.</p>
+        <p class="body">The live page spent its one guaranteed screen on introductions instead of options. Two specific issues stood out:</p>
+      </div>
+
+      <div class="figure-card">
+        <div class="figure-img-wrap">
+          <div class="frame">
+            <img src="https://www.figma.com/api/mcp/asset/33b713b3-f166-4c33-959a-62d3ef18604e.png" alt="Old version of the Meridian page, showing the hero and gray service tabs above the fold" loading="lazy" decoding="async" />
+            <div class="img-marker" style="left:47.4%; top:26.4%;">1</div>
+            <div class="img-marker" style="left:87.7%; top:65.3%;">2</div>
+          </div>
+        </div>
+        <div class="figure-caption">
+          <span class="fig-title">Fig. 1 – Old version, first 900px</span>
+          <span class="fig-desc">The version live at the start of this project. Hero and intro copy run roughly 340px before any service is visible.</span>
+        </div>
+      </div>
+
+      <div class="numbered-list">
+        <div class="numbered-item">
+          <div class="coral-badge">1</div>
+          <div class="ni-content">
+            <p class="ni-title">The hero swallowed the fold.</p>
+            <p class="ni-desc">340px deep before a single service appeared on a page whose entire job was to sell services.</p>
+          </div>
+        </div>
+        <div class="numbered-item">
+          <div class="coral-badge">2</div>
+          <div class="ni-content">
+            <p class="ni-title">The tabs implied a decision before the visitor made one.</p>
+            <p class="ni-desc">Three of four service tabs sat in flat gray on a gray field, reading as disabled.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- III. The Fix -->
+  <section class="section solution reveal" id="revision">
+    <div class="eyebrow-stack">
+      <div class="pill">III. The Fix</div>
+      <p class="solution-heading">CUT THE HERO.<span class="accent"> SURFACE THE SERVICES.</span></p>
+      <p class="solution-body">By collapsing the marketing-focused hero and elevating our functional units directly to the top fold, users can discover and explore our concrete offerings immediately on arrival.</p>
+    </div>
+
+    <div class="figure-card">
+      <div class="figure-img-wrap">
+        <div class="frame">
+          <img src="https://www.figma.com/api/mcp/asset/6cc35989-d134-4b0b-b07e-976dedff441c.png" alt="Shipped version of the Meridian page, showing services surfaced directly at the top fold" loading="lazy" decoding="async" />
+        </div>
+      </div>
+      <div class="figure-caption">
+        <span class="fig-title">Fig. 2 – Shipped version, first 900px</span>
+      </div>
+    </div>
+
+    <div class="revision-box">
+      <h4>Revision Details</h4>
+      <div class="revision-grid">
+        <div class="rev-item">
+          <span class="rev-title">Hero</span>
+          <span class="rev-pill before">Before: 340px, full-bleed photo, no services visible</span>
+          <span class="rev-pill after">After: 193px – a 43% cut, tab bar lands in view immediately below</span>
+        </div>
+        <div class="rev-item">
+          <span class="rev-title">Tab bar</span>
+          <span class="rev-pill before">Before: Gray-on-gray inactive tabs, one implied default</span>
+          <span class="rev-pill after">After: White background on every tab, one accent color marks the active state only</span>
+        </div>
+        <div class="rev-item">
+          <span class="rev-title">Service cards</span>
+          <span class="rev-pill before">Before: Vertical stack – comparing all options meant real scrolling</span>
+          <span class="rev-pill after">After: Two-column grid (stakeholder-agreed) – four services readable at a glance</span>
+        </div>
+        <div class="rev-item">
+          <span class="rev-title">Fold depth</span>
+          <span class="rev-pill before">Before: ~1,300px to see all three services in the old layout</span>
+          <span class="rev-pill after">After: 875px to see all four services, comfortably inside the first screen</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Takeaways -->
+  <section class="lessons reveal" id="reflection">
+    <div class="pill">Key Takeaways</div>
+    <p class="lessons-heading">THREE LESSONS FROM<span class="accent"> THIS OPTIMISATION.</span></p>
+    <div class="lessons-list">
+      <div class="lesson-item">
+        <span class="numeral">I.</span>
+        <div class="lesson-content">
+          <p class="lesson-title">Attention is a scarce currency.</p>
+          <p class="lesson-desc">If visitors do not see what you do within the first 3 seconds, they will leave.</p>
+        </div>
+      </div>
+      <div class="lesson-item">
+        <span class="numeral">II.</span>
+        <div class="lesson-content">
+          <p class="lesson-title">Visual style should back function.</p>
+          <p class="lesson-desc">A beautiful design that hides your services is a failed marketing asset.</p>
+        </div>
+      </div>
+      <div class="lesson-item">
+        <span class="numeral">III.</span>
+        <div class="lesson-content">
+          <p class="lesson-title">Always design for real device heights.</p>
+          <p class="lesson-desc">Validate folds against standard viewport sizes, not just infinite design canvases.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p class="footer-message">Thank you for reading.</p>
+    <nav class="footer-links" aria-label="Social and professional links">
+      <a href="https://www.instagram.com/feyaxdesigns/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <a href="https://medium.com/@fyydoshi" target="_blank" rel="noopener noreferrer">Medium</a>
+      <a href="https://docs.google.com/document/d/1kqhsZcNHAPhXttOyTlir6gJJM1FLG29F/edit?usp=sharing&amp;ouid=106109041708842757722&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer">Resume</a>
+    </nav>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var body = document.body;
+  var header = document.querySelector('.site-header');
+
+  // Mark JS as ready so reveal animations can engage (content is visible by default otherwise)
+  body.classList.add('js-ready');
+
+  // Subtle shadow on the sticky header once the page has scrolled
+  var onScrollHeader = function () {
+    if (window.scrollY > 8) {
+      header.classList.add('scrolled');
+    } else {
+      header.classList.remove('scrolled');
+    }
+  };
+  onScrollHeader();
+  window.addEventListener('scroll', onScrollHeader, { passive: true });
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Gentle fade-up reveal for each section as it enters the viewport
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    var revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(function (el) { revealObserver.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('in-view'); });
+  }
+
+  // Scrollspy: highlight the nav link matching the section currently in view
+  var navLinks = Array.prototype.slice.call(
+    document.querySelectorAll('.site-header nav a[href^="#"]')
+  );
+  var sections = navLinks
+    .map(function (link) { return document.getElementById(link.getAttribute('href').slice(1)); })
+    .filter(Boolean);
+
+  if ('IntersectionObserver' in window && sections.length) {
+    var spyObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var link = document.querySelector('.site-header nav a[href="#' + entry.target.id + '"]');
+        if (!link) return;
+        if (entry.isIntersecting) {
+          navLinks.forEach(function (l) { l.classList.remove('active'); });
+          link.classList.add('active');
+        }
+      });
+    }, { threshold: 0, rootMargin: '-45% 0px -50% 0px' });
+    sections.forEach(function (sec) { spyObserver.observe(sec); });
+  }
+})();
+</script>
+</body>
+</html>
